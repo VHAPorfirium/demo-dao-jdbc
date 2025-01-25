@@ -1,5 +1,8 @@
 package model.dao.impl;
 
+import db.DB;
+import db.DbException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,19 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import db.DB;
-import db.DbException;
-
-import java.sql.Connection;
-
 import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
 
 public class SellerDaoJDBC implements SellerDao {
 
-    private Connection conn;
+    private final Connection conn;
 
     public SellerDaoJDBC(Connection conn) {
         this.conn = conn;
@@ -125,11 +122,14 @@ public class SellerDaoJDBC implements SellerDao {
         ResultSet rs = null;
 
         try {
-            st = conn.prepareStatement(
-                    "SELECT seller.*,department.Name as DepName \r\n" + //
-                            "FROM seller INNER JOIN department \r\n" + //
-                            "ON seller.DepartmentId = department.Id \r\n" + //
-                            "WHERE seller.Id = ?");
+            st = conn.prepareStatement("""
+                                       SELECT seller.*,department.Name as DepName \r
+                                       FROM seller INNER JOIN department \r
+                                       ON seller.DepartmentId = department.Id \r
+                                       WHERE seller.Id = ?""" //
+            //
+            //
+            );
 
             st.setInt(1, Id);
             rs = st.executeQuery();
